@@ -1,28 +1,14 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 import csv
 import time
+from main import driver
 
-# Instagram credentials
-username = "amitayoren"
-password = "Surface2016@"
 
-# Target Instagram user
-user_profile = "mdfighters"  # Replace with the user's profile you want to scrape
 
-# Set up the Chrome webdriver
-driver = webdriver.Chrome()
 
-# Function to login to Instagram
-def login(username, password):
-    driver.get("https://www.instagram.com/accounts/login/")
-    time.sleep(2)
-    username_field = driver.find_element(By.NAME, "username")
-    password_field = driver.find_element(By.NAME, "password")
-    username_field.send_keys(username)
-    password_field.send_keys(password)
-    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-    time.sleep(5)
+
+
+
 
 def scrape_users_from_file(file_path, num_posts=10):
     with open(file_path, 'r') as file:
@@ -54,12 +40,12 @@ def scrape_user_posts(user_profile, num_posts=10):
             writer = csv.writer(file)
             writer.writerows([[post_link] for post_link in list(post_links)[:num_posts]])
 
-# Main script
-try:
-    login(username, password)
-    file_path = r"C:\Users\amita\InstagramScraper\users.txt"  # Specify the file path to the usernames list
-    scrape_users_from_file(file_path, num_posts=10)
-except Exception as e:
-    print("An error occurred:", e)
-finally:
-    driver.quit()
+# # Main script
+# try:
+#     login(username, password)
+#     file_path = r"C:\Users\amita\InstagramScraper\users.txt"  # Specify the file path to the usernames list
+#     scrape_users_from_file(file_path, num_posts=10)
+# except Exception as e:
+#     print("An error occurred:", e)
+# finally:
+#     driver.quit()

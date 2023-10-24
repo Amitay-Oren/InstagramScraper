@@ -1,28 +1,12 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 import csv
 import time
+from main import driver
 
-# Instagram credentials
-username = "amitayoren"
-password = "Surface2016@"
 
-# Target Instagram hashtag
-hashtag = "freepalestine"
 
-# Set up the Chrome webdriver
-driver = webdriver.Chrome()
 
-# Function to login to Instagram
-def login(username, password):
-    driver.get("https://www.instagram.com/accounts/login/")
-    time.sleep(2)
-    username_field = driver.find_element(By.NAME, "username")
-    password_field = driver.find_element(By.NAME, "password")
-    username_field.send_keys(username)
-    password_field.send_keys(password)
-    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-    time.sleep(5)
+
 
 # Function to scrape posts with a specific hashtag and save post links to CSV
 def scrape_hashtag_posts(hashtag, num_posts=10):
@@ -43,11 +27,11 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
         writer.writerow(['Post Link'])
         writer.writerows([[post_link] for post_link in post_links])
 
-# Main script
-try:
-    login(username, password)
-    scrape_hashtag_posts(hashtag, num_posts=10)
-except Exception as e:
-    print("An error occurred:", e)
-finally:
-    driver.quit()
+# # Main script
+# try:
+#     login(username, password)
+#     scrape_hashtag_posts(hashtag, num_posts=10)
+# except Exception as e:
+#     print("An error occurred:", e)
+# finally:
+#     driver.quit()
