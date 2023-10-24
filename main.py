@@ -10,7 +10,7 @@ hashtag = "freepalestine"
 def main():
     try:
         # Load credentials from credential.json
-        with open('credential.json') as f:
+        with open('credentials.json') as f:
             credentials = json.load(f)
 
         # Extract username and password
