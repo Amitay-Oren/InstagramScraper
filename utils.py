@@ -118,6 +118,10 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
             
             print(len(post_links))
             
+            if len(post_links) >= num_posts:
+                print(post_links)
+                break
+            
         
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
