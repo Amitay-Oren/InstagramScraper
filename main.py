@@ -8,7 +8,7 @@ from utils import scrape_hashtag_posts, scrape_user_posts, login
 hashtag = "freepalestine"
 
 # Target Instagram user
-user_profile = "mdfighters"  # Replace with the user's profile you want to scrape
+user_profile = "push.il"  # Replace with the user's profile you want to scrape
 
 
 
@@ -32,14 +32,14 @@ def main():
         login(username, password)
 
         scrape_hashtag_posts(hashtag, num_posts=10)
-        scrape_user_posts(user_profile, num_posts=10)
+        # scrape_user_posts(user_profile, num_posts=10)
 
     except Exception as e:
         print("An error occurred:", e)
 
-    finally:
-        driver.quit()
+    # finally:
+        # driver.quit()
 
 if __name__ == "__main__":
-    driver = webdriver.Chrome()  # Define the driver variable
+    # driver = webdriver.Chrome()  # Define the driver variable
     main()
