@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import csv
+import json
 
 import datetime
 from datetime import date
@@ -28,17 +29,6 @@ def login(username, password):
     time.sleep(5)
 
 #-----------------Scrape by user----------------------
-
-def scrape_users_from_file(file_path, num_posts=10):
-    with open(file_path, 'r') as file:
-        usernames = file.read().splitlines()
-
-    for username in usernames:
-        print(f"Scraping posts from user: {username}")
-        try:
-            scrape_user_posts(username, num_posts)
-        except Exception as e:
-            print(f"Error scraping posts from user: {username}. The error: {e}")
 
 
 # Function to scrape all post links from a user's profile
@@ -85,9 +75,13 @@ def scrape_user_posts(user_profile, num_posts):
         writer.writerows([[post_link] for post_link in post_links])
 
 
+def scrape_users_posts_from_file(users, num_posts):
+
+    for user in users:
+        scrape_user_posts(user, num_posts)
+
+
 #-----------------Scrape by hashtag--------------------
-
-
 def scrape_hashtag_posts(hashtag, num_posts=10):
     try:
         driver.get(f"https://www.instagram.com/explore/tags/{hashtag}/")
@@ -99,51 +93,52 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
     time.sleep(5)
 
     post_links = set()
-    start_date = date(2023, 10, 26)
+    start_date = date(2023, 10, 7)
     start_datetime = datetime.datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
 
-    while len(post_links) < num_posts:
-        print(len(post_links))
-        links = driver.find_elements(By.XPATH, "//a[contains(@href,'/p/')]")
-        for link in links:
-            try:
-                post_date = get_post_date(link.get_attribute("href"))
-                print(post_date)
-            except Exception as e:
-                print(f"Error getting post date. The error: {e}")
-                continue
+    print(len(post_links))
+    
+    links = driver.find_elements(By.XPATH, "//a[contains(@href,'/p/')]")
+    for link in links:
+        try:
+            post_date = get_post_date(link.get_attribute("href"))
+            print(post_date)
 
-            if start_datetime <= post_date:
-                post_links.add(link.get_attribute("href"))
+        except Exception as e:
+            print(f"Error getting post date. The error: {e}")
+            continue
+
+        if start_datetime <= post_date:
+            post_links.add(link.get_attribute("href"))
             
-            print(len(post_links))
+        print(len(post_links))
             
-            if len(post_links) >= num_posts:
-                print(post_links)
-                break
+        if len(post_links) >= num_posts:
+            print(post_links)
+            break
             
         
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(2)
 
-    # Save post links to CSV file
-    with open('instagram_post_links.csv', mode='w', encoding='utf-8', newline='') as file:
-        try:
-            writer = csv.writer(file)
-            writer.writerow(['Post Link'])
-            writer.writerows([[post_link] for post_link in post_links])
-        except Exception as e:
-            print(f"Error saving post links to CSV file. The error: {e}")
+    save_post_links_to_csv_file(post_links, hashtag)
 
 
-# def get_post_date(post_link):
-#     return datetime.date(2023, 10, 10)
-    
 
+def scrape_hashtags_posts_from_file(hashtags, num_posts):
+
+    for hashtag in hashtags:  
+        scrape_hashtag_posts(hashtag, num_posts)
+
+
+
+
+
+# -----------------helper functions------------
 
 def get_post_date(post_link):
     driver_post_date = webdriver.Chrome()
-    time.sleep(10)
+    # time.sleep(10)
     # Navigate to the post link using the driver
     driver_post_date.get(post_link)
     time.sleep(10)
@@ -162,5 +157,55 @@ def get_post_date(post_link):
 
     #return datetime_obj
     return datetime_obj
+
+def save_post_links_to_csv_file(post_links, hashtag):
+    # Save post links to CSV file
+    with open('instagram_post_links.csv', mode='w', encoding='utf-8', newline='') as file:
+        try:
+            writer = csv.writer(file)
+            writer.writerow('========' + hashtag + '========')
+            writer.writerows([[post_link] for post_link in post_links])
+        except Exception as e:
+            print(f"Error saving post links to CSV file. The error: {e}")
+
+def get_hashtags():
+    with open('against_hashtags.txt', 'r', encoding='utf-8') as f:
+        hashtags = f.readlines()
+    hashtags = [hashtag.strip() for hashtag in hashtags]
+
+    return hashtags
+
+def get_users():
+    with open('users.txt', 'r', encoding='utf-8') as f:
+        users = f.readlines()
+    users = [user.strip() for user in users]
+
+    return users
+
+def get_username():
+    try:
+        # Load credentials from credential.json
+        with open('credentials.json') as f:
+            credentials = json.load(f)
+
+        # Extract username and password
+        username = credentials['username']
+    except Exception as e:
+        print("An error occurred while trying the username from credentials.json:", e)
+
+    return username
+
+def get_password():
+    try:
+        # Load credentials from credential.json
+        with open('credentials.json') as f:
+            credentials = json.load(f)
+
+        # Extract username and password
+        password = credentials['password']
+    except Exception as e:
+        print("An error occurred while trying the username from credentials.json:", e)
+        
+    return password
 
 

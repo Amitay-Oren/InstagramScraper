@@ -1,14 +1,5 @@
-import json
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-import time
-from utils import scrape_hashtag_posts, scrape_user_posts, login
+from utils import scrape_hashtags_posts_from_file, scrape_users_posts_from_file, login, get_hashtags, get_username, get_password
 
-# Target Instagram hashtag
-hashtag = "freepalestine"
-
-# Target Instagram user
-user_profile = "push.il"  # Replace with the user's profile you want to scrape
 
 
 
@@ -18,28 +9,20 @@ user_profile = "push.il"  # Replace with the user's profile you want to scrape
 # Main script
 def main():
     
-
-    try:
-        # Load credentials from credential.json
-        with open('credentials.json') as f:
-            credentials = json.load(f)
-
-        # Extract username and password
-        username = credentials['username']
-        password = credentials['password']
+    hashtags = get_hashtags()
+    print(hashtags)
+    
+    username = get_username()
+    password = get_password()
 
         
-        login(username, password)
+    login(username, password)
 
-        scrape_hashtag_posts(hashtag, num_posts=10)
-        # scrape_user_posts(user_profile, num_posts=10)
+    scrape_hashtags_posts_from_file(hashtags, num_posts=10)
+    # scrape_user_posts(user_profile, num_posts=10)
 
-    except Exception as e:
-        print("An error occurred:", e)
+   
 
-    # finally:
-        # driver.quit()
 
 if __name__ == "__main__":
-    # driver = webdriver.Chrome()  # Define the driver variable
     main()
