@@ -83,6 +83,8 @@ def scrape_users_posts_from_file(users, num_posts):
 
 #-----------------Scrape by hashtag--------------------
 def scrape_hashtag_posts(hashtag, num_posts=10):
+
+    print("===============" + hashtag + "===============")
     try:
         driver.get(f"https://www.instagram.com/explore/tags/{hashtag}/")
         # Wait until the first post link is visible
@@ -94,7 +96,9 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
 
     post_links = set()
     start_date = date(2023, 10, 7)
+    end_date = date(2023,10, 27)
     start_datetime = datetime.datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+    end_datetime = datetime.datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0)
 
     print(len(post_links))
     
@@ -102,14 +106,14 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
     for link in links:
         try:
             post_date = get_post_date(link.get_attribute("href"))
-            print(post_date)
 
         except Exception as e:
             print(f"Error getting post date. The error: {e}")
             continue
 
-        if start_datetime <= post_date:
+        if start_datetime <= post_date <= end_datetime:
             post_links.add(link.get_attribute("href"))
+            print(post_links)
             
         print(len(post_links))
             
@@ -160,10 +164,10 @@ def get_post_date(post_link):
 
 def save_post_links_to_csv_file(post_links, hashtag):
     # Save post links to CSV file
-    with open('instagram_post_links.csv', mode='w', encoding='utf-8', newline='') as file:
+    with open('instagram_post_links.csv', mode='a', encoding='utf-8', newline='') as file:
         try:
             writer = csv.writer(file)
-            writer.writerow('========' + hashtag + '========')
+            writer.writerow(['========' + hashtag + '========'])
             writer.writerows([[post_link] for post_link in post_links])
         except Exception as e:
             print(f"Error saving post links to CSV file. The error: {e}")
