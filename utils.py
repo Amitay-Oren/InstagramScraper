@@ -96,7 +96,7 @@ def scrape_hashtag_posts(hashtag, num_posts=10):
 
     post_links = set()
     start_date = date(2023, 10, 7)
-    end_date = date(2023,10, 27)
+    end_date = date(2023,11, 21)
     start_datetime = datetime.datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
     end_datetime = datetime.datetime(end_date.year, end_date.month, end_date.day, 0, 0, 0)
 
